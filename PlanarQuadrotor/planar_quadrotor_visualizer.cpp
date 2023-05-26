@@ -17,6 +17,17 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     q_y = state[1];
     q_theta = state[2];
 
+    int screenWidth, screenHeight;
+    SDL_GetRendererOutputSize(gRenderer.get(), &screenWidth, &screenHeight);
+    int middle_x=screenWidth/2;
+    int middle_y=screenHeight/2;
     SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0x00, 0x00, 0xFF);
-    filledCircleColor(gRenderer.get(), q_x, q_y, 30, 0xFF0000FF);
+
+    int circleX = middle_x + static_cast<int>(q_x);
+    int circleY = middle_y + static_cast<int>(q_y);
+
+   filledCircleColor(gRenderer.get(), circleX, circleY, 30, 0x43FF64FF);
+   SDL_Rect main_rectangle = {q_x , q_y, 160, 40};
+   SDL_Rect left_rectangle = {q_x - 80, q_y, 15, 60};
+   SDL_Rect right_rentangle = {q_x + 80, q_y, 15, 60};
 }
