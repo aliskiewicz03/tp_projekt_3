@@ -21,6 +21,7 @@ Eigen::MatrixXf LQR(PlanarQuadrotor& quadrotor, float dt) {
     Eigen::MatrixXf A = Eigen::MatrixXf::Zero(6, 6);
     Eigen::MatrixXf A_discrete = Eigen::MatrixXf::Zero(6, 6);
     Eigen::MatrixXf B(6, 2);
+
     Eigen::MatrixXf B_discrete(6, 2);
     Eigen::MatrixXf Q = Eigen::MatrixXf::Identity(6, 6);
     Eigen::MatrixXf R = Eigen::MatrixXf::Identity(2, 2);
@@ -63,20 +64,28 @@ int main(int argc, char* args[]) {
     const int SCREEN_HEIGHT = 720;
 
     Eigen::VectorXf initial_state = Eigen::VectorXf::Zero(6);
+    int sx=640, sy=360;
+    initial_state<< sx,sy,0,0,0,0;
     PlanarQuadrotor quadrotor(initial_state);
     PlanarQuadrotorVisualizer quadrotor_visualizer(&quadrotor);
 
+    int mouseX = 0;
+    int mouseY = 0;
+
     Eigen::VectorXf goal_state = Eigen::VectorXf::Zero(6);
-    goal_state << -1, 7, 0, 0, 0, 0;
+    goal_state <<  sx, sy, 0, 0, 0, 0;
     quadrotor.SetGoal(goal_state);
 
-    const float dt = 0.001;
+    const float dt = 0.003;
     Eigen::MatrixXf K = LQR(quadrotor, dt);
     Eigen::Vector2f input = Eigen::Vector2f::Zero(2);
 
     std::vector<float> x_history;
     std::vector<float> y_history;
     std::vector<float> theta_history;
+   
+
+   
 
     if (init(gWindow, gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT) >= 0) {
         SDL_Event e;
@@ -84,6 +93,7 @@ int main(int argc, char* args[]) {
         float delay;
         int x, y;
         Eigen::VectorXf state = Eigen::VectorXf::Zero(6);
+       
 
         while (!quit) {
             while (SDL_PollEvent(&e) != 0) {
