@@ -3,7 +3,8 @@
 #include <Eigen/Dense>
 #include <memory>
 #include <matplot/matplot.h>
-
+#include <random>
+#include <time.h>
 #include "planar_quadrotor.h"
 #include "planar_quadrotor_visualizer.h"
 
@@ -60,20 +61,29 @@ int init(std::shared_ptr<SDL_Window>& gWindow, std::shared_ptr<SDL_Renderer>& gR
 int main(int argc, char* args[]) {
     std::shared_ptr<SDL_Window> gWindow = nullptr;
     std::shared_ptr<SDL_Renderer> gRenderer = nullptr;
-    const int SCREEN_WIDTH = 1280;
-    const int SCREEN_HEIGHT = 720;
+    int screenWidth; 
+    int screenHeight;
+    SDL_GetRendererOutputSize(gRenderer.get(), &screenWidth, &screenHeight);
+
+    const int SCREEN_WIDTH = screenWidth;
+    const int SCREEN_HEIGHT = screenHeight;
 
     Eigen::VectorXf initial_state = Eigen::VectorXf::Zero(6);
-    int sx=640, sy=360;
-    initial_state<< sx,sy,0,0,0,0;
+    int center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2;
+    int beginning_x, beginning_y;
+    srand(time(NULL));
+    beginning_x=rand()%SCREEN_WIDTH;
+    beginning_y=rand()%SCREEN_HEIGHT;
+
+    initial_state << beginning_x,beginning_y,0,0,0,0;
     PlanarQuadrotor quadrotor(initial_state);
     PlanarQuadrotorVisualizer quadrotor_visualizer(&quadrotor);
 
-    int mouseX = 0;
-    int mouseY = 0;
+    int mouse_x = 0;
+    int mouse_y = 0;
 
     Eigen::VectorXf goal_state = Eigen::VectorXf::Zero(6);
-    goal_state <<  sx, sy, 0, 0, 0, 0;
+    goal_state <<  center_x, center_y, 0, 0, 0, 0;
     quadrotor.SetGoal(goal_state);
 
     const float dt = 0.003;
